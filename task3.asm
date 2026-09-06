@@ -1,3 +1,4 @@
+; chosen shift caesar cipher
 section .bss
     buf     resb 4096
 
@@ -12,7 +13,7 @@ _start:
     syscall
     mov r12, rax        ; r12 = total bytes read
 
-    ; --- parse the first line: the shift amount ---
+    ; Parse first line (shift amount)
     ; Input is text, not numbers. '5' is the value 53, not 5.
     ; Subtract '0' to turn a digit character into its numeric value.
     xor rcx, rcx        ; index into buf
@@ -33,7 +34,9 @@ _start:
     inc rcx               ; skip the newline itself
     mov r13, rcx           ; r13 = index where the text begins (save it for the write later)
 
-; --- same swap/shift loop as before, but shift amount is in bl (0-25) ---
+; Parse the text itself
+; loop from r13 to r12-1, swapping/shift each character as needed
+; same swap/shift loop but shift amount is in bl (0-25)
 .loop:
     cmp rcx, r12
     jge .done
@@ -68,7 +71,7 @@ _start:
     jmp .loop
 
 .done:
-    ; write only the text portion — from r13 onward, not the shift line
+    ; write only the text portion from r13 onward, not the shift line
     mov rax, 1
     mov rdi, 1
     mov rsi, buf
@@ -77,6 +80,6 @@ _start:
     sub rdx, r13           ; rdx = how many bytes of text there are
     syscall
 
-    mov rax, 60
+    mov rax, 60 ;exit yk
     mov rdi, 0
     syscall

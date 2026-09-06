@@ -1,3 +1,4 @@
+; XOR to hex
 section .bss
     buf     resb 4096       ; the input
     hexbuf  resb 8200       ; two hex chars per input byte, plus a newline
@@ -6,7 +7,7 @@ section .text
     global _start
 
 _start:
-    mov rax, 0
+    mov rax, 0 ;read
     mov rdi, 0
     mov rsi, buf
     mov rdx, 4096
@@ -58,7 +59,7 @@ _start:
     mov byte [hexbuf + r13], 10   ; the single trailing newline the task asks for
     inc r13
 
-    mov rax, 1
+    mov rax, 1 ;write
     mov rdi, 1
     mov rsi, hexbuf
     mov rdx, r13

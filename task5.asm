@@ -1,3 +1,11 @@
+; viginere cipher
+
+;The first line of the input is a keyword made of lowercase letters. The rest is the text to
+;encrypt.*Shift each letter of the text forward by the amount given by the current keyword
+;letter, where a shifts by 0, b by 1, and so on. Move to the next keyword letter for each
+;letter you encrypt, wrapping back to the start of the keyword. Non-letters are copied
+;unchanged and do not advance the keyword.
+
 section .bss
     buf     resb 4096
     keybuf  resb 64         ; the keyword line
@@ -13,7 +21,7 @@ _start:
     syscall
     mov r12, rax        ; r12 = total bytes read
 
-    ; --- parse the first line: the keyword ---
+    ; parse keyword
     xor rcx, rcx        ; index into buf
     xor r14, r14         ; r14 = keyword length
 
@@ -31,7 +39,7 @@ _start:
     mov r13, rcx           ; r13 = start index of the text (for the write later)
     xor r15, r15           ; r15 = current position within the keyword
 
-.loop:
+.loop: ;loop through the text, shifting each letter by the current keyword letter
     cmp rcx, r12
     jge .done
 
@@ -51,7 +59,7 @@ _start:
 
 .check_upper:
     cmp al, 'A'
-    jb .store               ; not a letter at all — leave unchanged, keyword does not advance
+    jb .store               ; not a letter at all, leave unchanged & keyword does not advance
     cmp al, 'Z'
     ja .store
     mov bl, [keybuf + r15]
